@@ -26,11 +26,12 @@ import data.Categorie;
 import data.Picture;
 import data.Product;
 import data.ShoppingList;
+import grpio.PinController;
 
 public class DBClass {
 
 	private static DBClass instance;
-
+	private static PinController pinC;
 
 	private DBClass() {
 	}
@@ -38,6 +39,8 @@ public class DBClass {
 	public static DBClass getInstance() {
 		if (DBClass.instance == null) {
 			DBClass.instance = new DBClass();
+			pinC = new PinController();
+			
 		}
 		return DBClass.instance;
 	}
@@ -230,6 +233,7 @@ public class DBClass {
 		stmt.executeUpdate("INSERT INTO storedProducts (product_id,storedate,expiredate) VALUES ("+prod.getProductID()+", '"+stored+"', '"+exp+"')");
 		stmt.close();
 		con.close();
+		pinC.positionIndicatorLed(Integer.parseInt(prod.getCategorie()));
 	}
 	
 	
