@@ -40,7 +40,6 @@ public class DBClass {
 		if (DBClass.instance == null) {
 			DBClass.instance = new DBClass();
 			pinC = new PinController();
-			
 		}
 		return DBClass.instance;
 	}
