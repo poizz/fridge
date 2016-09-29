@@ -39,7 +39,7 @@ public class DBClass {
 	public static DBClass getInstance() {
 		if (DBClass.instance == null) {
 			DBClass.instance = new DBClass();
-			pinC = new PinController();
+			//pinC = new PinController();
 		}
 		return DBClass.instance;
 	}
@@ -85,6 +85,7 @@ public class DBClass {
 		
 		try {
 			storeProduct(prod);
+			deleteDeletedItem(prod.getProductID());
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -232,7 +233,7 @@ public class DBClass {
 		stmt.executeUpdate("INSERT INTO storedProducts (product_id,storedate,expiredate) VALUES ("+prod.getProductID()+", '"+stored+"', '"+exp+"')");
 		stmt.close();
 		con.close();
-		pinC.positionIndicatorLed(Integer.parseInt(prod.getCategorie()));
+		//pinC.positionIndicatorLed(Integer.parseInt(prod.getCategorie()));
 	}
 	
 	
@@ -413,11 +414,20 @@ public class DBClass {
 		con.close();
 		
 	}
-	public void addDeletedItem(int id) throws SQLException{
+	public void addDeletedItem(int id) throws SQLException{ //product has been deleted, is suggested for shoppinglist now
 		//limitDeletedItemsTo20();
 		Connection con = getDBConnection();
 		Statement stmt = con.createStatement();
 		stmt.executeUpdate("INSERT INTO deletedproducts(productid) VALUES ("+id+")");
+		stmt.close();
+		con.close();
+		
+	}	
+	public void deleteDeletedItem(int id) throws SQLException{ // product hast been stored, not suggested for shoppinglist anymore
+		//limitDeletedItemsTo20();
+		Connection con = getDBConnection();
+		Statement stmt = con.createStatement();
+		stmt.executeUpdate("DELETE FROM deletedproducts where productid = "+id);
 		stmt.close();
 		con.close();
 		
