@@ -27,15 +27,13 @@ public class PinController {
 	private static GpioPinDigitalOutput pinMilkAndEggs;
 	private static GpioPinDigitalOutput pinFruitAndVegtables;
 	private static GpioPinDigitalOutput pinBarcodeScanner;
-	private static GpioController gpioC;
-	final GpioPinDigitalInput photoSwitch;
+	private static final GpioController gpioC = GpioFactory.getInstance();;
+	GpioPinDigitalInput photoSwitch;
 	private DBClass dbC;
 	
 	public PinController(){
 		
 		dbC = DBClass.getInstance( );
-		
-		gpioC = GpioFactory.getInstance();
 		
 		//Position Indicatior Pins
 		pinMeatAndFish = gpioC.provisionDigitalOutputPin(RaspiPin.GPIO_00,"MeatAndFish",PinState.LOW);
@@ -44,37 +42,41 @@ public class PinController {
 		pinOthers = gpioC.provisionDigitalOutputPin(RaspiPin.GPIO_03,"pinOthers",PinState.LOW);
 		
 		//BarcodeScanner Pin
-		pinOthers = gpioC.provisionDigitalOutputPin(RaspiPin.GPIO_05,"BarcodeScanner",PinState.LOW);
-				
-		//Photo switch options
-		photoSwitch = gpioC.provisionDigitalInputPin(RaspiPin.GPIO_04, PinPullResistance.PULL_DOWN);
+		pinBarcodeScanner = gpioC.provisionDigitalOutputPin(RaspiPin.GPIO_05,"BarcodeScanner",PinState.LOW);
+		System.out.println("yey");
+		//photoswitch
+		photoSwitch = gpioC.provisionDigitalInputPin(RaspiPin.GPIO_07, PinPullResistance.PULL_DOWN);
 		photoSwitch.setShutdownOptions(true);
 		photoSwitch.addListener(new GpioPinListenerDigital() {
             @Override
             public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
                 // display pin state on console
+               // System.out.println(" --> GPIO PIN STATE CHANGE: " + event.getPin() + " = " + event.getState());
                 if(event.getState()==PinState.HIGH){
+                	System.out.println("yey");
                 	try {
 						TakeAndSavePicture();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (SQLException e) {
+					} catch (IOException | SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-                	toggleBarcodeScanner();
                 }
             }
+
         });
 		
+
+				
+	
 		
 	}
 	
 	//Position Indicatior Functions
 	
 	public void positionIndicatorLed(int categorie){
+		
 		setAllPinsLow();
+		
 		switch(categorie){
 			case 1:
 				pinMeatAndFish.setState((PinState.HIGH));
@@ -96,16 +98,16 @@ public class PinController {
 	}
 	
 	private void setPinStateLowAfterDelay(GpioPinDigitalOutput pin){
-		
 		new java.util.Timer().schedule( 
 		        new java.util.TimerTask() {
 		            @Override
 		            public void run() {
-		            	pin.setState(PinState.LOW);
+		            	setAllPinsLow();
 		            }
 		        }, 
 		        5000 
 		);
+
 	}
 	private void setAllPinsLow(){
 		
@@ -125,7 +127,7 @@ public class PinController {
 		
 		String currentDir = System.getProperty("user.dir");
         Runtime.getRuntime().exec("sudo fswebcam -r 640x480 -d /dev/video0 "+currentDir+"/fridge.jpg");      
-	    File file = new File(currentDir+"/fridge.jpg");
+	    File file = new File("fridge.jpg");
         dbC.storePic(0, file);
         
 	}

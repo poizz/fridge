@@ -1,5 +1,7 @@
 package database;
 
+import grpio.PinController;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -14,7 +16,6 @@ import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -22,11 +23,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.xml.bind.DatatypeConverter;
+
 import data.Categorie;
 import data.Picture;
 import data.Product;
 import data.ShoppingList;
-import grpio.PinController;
 
 public class DBClass {
 
@@ -39,7 +41,7 @@ public class DBClass {
 	public static DBClass getInstance() {
 		if (DBClass.instance == null) {
 			DBClass.instance = new DBClass();
-			//pinC = new PinController();
+			pinC = new PinController();
 		}
 		return DBClass.instance;
 	}
@@ -251,7 +253,7 @@ public class DBClass {
 	    return (int)TimeUnit.DAYS.convert(diffInMillies,TimeUnit.MILLISECONDS);
 	}
 	
-	//id: 0 = hühlschrank, 1= gefrierfach
+	//id: 0 = hï¿½hlschrank, 1= gefrierfach
 	public void storePic(int id, File picture ) throws SQLException, FileNotFoundException{
 		
 		FileInputStream fis = new FileInputStream(picture);
@@ -506,8 +508,7 @@ public class DBClass {
 
 			byte[] imageBytes = imageBlob.getBytes(1, (int) imageBlob.length());
 
-			String encoded = Base64.getEncoder().encodeToString(imageBytes);
-
+			String encoded = DatatypeConverter.printBase64Binary(imageBytes);
 			Picture pic = new Picture(name, encoded);
 			picList.add(pic);	
 		}
