@@ -119,7 +119,7 @@ public class DBClass {
 		Connection con = getDBConnection();
 		Statement stmt = con.createStatement();
 
-		String strSelect = "select * from Products where productname = '"+productName+"'";
+		String strSelect = "select * from products where productname = '"+productName+"'";
 		System.out.println(strSelect);
 		ResultSet rset = stmt.executeQuery(strSelect);
 		
@@ -152,7 +152,7 @@ public class DBClass {
 		Connection con = getDBConnection();
 		Statement stmt = con.createStatement();
 
-		String strSelect = "select * from Products where id = "+id;
+		String strSelect = "select * from products where id = "+id;
 		ResultSet rset = stmt.executeQuery(strSelect);
 		
 		
@@ -183,7 +183,7 @@ public class DBClass {
 		productname = removeQuote(productname);
 		Connection con = getDBConnection();
 		Statement stmt = con.createStatement();
-		stmt.executeUpdate("INSERT INTO Products(productname,shelflife,barcode) VALUES ('"+productname+"',0,"+barcode+")");
+		stmt.executeUpdate("INSERT INTO products(productname,shelflife,barcode) VALUES ('"+productname+"',0,"+barcode+")");
 		stmt.close();
 		con.close();
 	}
@@ -195,6 +195,7 @@ public class DBClass {
 		stmt.executeUpdate("UPDATE products SET categorie_id = "+categorieID+" WHERE id = "+id);
 		stmt.close();
 		con.close();
+		pinC.positionIndicatorLed(categorieID);
 	}
 	
 	public void updateExpireDateOfdStoredProductByID(int id, Date expDate) throws SQLException
@@ -232,10 +233,10 @@ public class DBClass {
 		java.sql.Date stored =  new java.sql.Date(prod.getStored().getTime());
 		java.sql.Date exp = new java.sql.Date(prod.getExpireDate().getTime());
 	
-		stmt.executeUpdate("INSERT INTO storedProducts (product_id,storedate,expiredate) VALUES ("+prod.getProductID()+", '"+stored+"', '"+exp+"')");
+		stmt.executeUpdate("INSERT INTO storedproducts (product_id,storedate,expiredate) VALUES ("+prod.getProductID()+", '"+stored+"', '"+exp+"')");
 		stmt.close();
 		con.close();
-		//pinC.positionIndicatorLed(Integer.parseInt(prod.getCategorie()));
+		pinC.positionIndicatorLed(Integer.parseInt(prod.getCategorie()));
 	}
 	
 	
@@ -262,11 +263,10 @@ public class DBClass {
 
 		Connection con = getDBConnection();
 		Statement stmt = con.createStatement();
-		String INSERT_PICTURE = "UPDATE pictures set photo = ? where id = "+id;
+		String INSERT_PICTURE = "UPDATE prictures set photo = ? where id = "+id;
 		ps = con.prepareStatement(INSERT_PICTURE);
-		ps.setBinaryStream(3, fis, (int) picture.length());
+		ps.setBinaryStream(1, fis, (int) picture.length());
 	    ps.executeUpdate();
-	    con.commit();
 		con.close();
 	}
 		
@@ -279,18 +279,18 @@ public class DBClass {
 		if(stored == 0){
 			if(categorieID == 0){
 				
-				strSelect = "select * from Products";
+				strSelect = "select * from products";
 				
 			}else{
-				 strSelect = "select * from Products where categorie_id = "+categorieID;
+				 strSelect = "select * from products where categorie_id = "+categorieID;
 			}
 		}else{
 			if(categorieID == 0){
 				
-				strSelect = "select Products.productname, Products.categorie_id, Products.shelflife, Products.id, Products.barcode, storedproducts.storedate, storedproducts.expiredate,storedproducts.storeid from Products inner join storedproducts where storedproducts.product_id = products.id";
+				strSelect = "select products.productname, products.categorie_id, products.shelflife, products.id, products.barcode, storedproducts.storedate, storedproducts.expiredate,storedproducts.storeid from products inner join storedproducts where storedproducts.product_id = products.id";
 				
 			}else{
-				strSelect = "select Products.productname, Products.categorie_id, Products.shelflife, Products.id, Products.barcode, storedproducts.storedate, storedproducts.expiredate, storedproducts.storeid from Products inner join storedproducts where storedproducts.product_id = products.id and Products.categorie_id = "+categorieID;
+				strSelect = "select products.productname, products.categorie_id, products.shelflife, products.id, products.barcode, storedproducts.storedate, storedproducts.expiredate, storedproducts.storeid from products inner join storedproducts where storedproducts.product_id = products.id and products.categorie_id = "+categorieID;
 			}
 			
 		}
@@ -326,7 +326,7 @@ public class DBClass {
 		Connection con = getDBConnection();
 		Statement stmt = con.createStatement();
 
-		String strSelect = "select id from Products where barcode = "+barcode;
+		String strSelect = "select id from products where barcode = "+barcode;
 		ResultSet rset = stmt.executeQuery(strSelect);
 		
 		
@@ -392,7 +392,7 @@ public class DBClass {
 		List<Product> prodList = new ArrayList<Product>();
 		String strSelect;
 				
-		strSelect = "select Products.productname,Products.barcode, Products.categorie_id, Products.shelflife,Products.id from Products inner join deletedproducts where deletedproducts.productid = Products.id";
+		strSelect = "select products.productname,products.barcode, products.categorie_id, products.shelflife,products.id from products inner join deletedproducts where deletedproducts.productid = products.id";
 
 		Connection con = getDBConnection();
 		Statement stmt = con.createStatement();
@@ -472,7 +472,7 @@ public class DBClass {
 		List<Product> prodList = new ArrayList<Product>();
 		String strSelect;
 		String producktname = removeQuote(name);
-		strSelect = "select Products.productname, Products.categorie_id, Products.shelflife, Products.id, Products.barcode, storedproducts.storedate, storedproducts.expiredate,storedproducts.storeid from Products inner join storedproducts where storedproducts.product_id = products.id and LOWER(Products.productname) LIKE'%"+producktname.toLowerCase()+"%'";	
+		strSelect = "select products.productname, products.categorie_id, products.shelflife, products.id, products.barcode, storedproducts.storedate, storedproducts.expiredate,storedproducts.storeid from products inner join storedproducts where storedproducts.product_id = products.id and LOWER(products.productname) LIKE'%"+producktname.toLowerCase()+"%'";	
 		Connection con = getDBConnection();
 		Statement stmt = con.createStatement();
 		ResultSet rset = stmt.executeQuery(strSelect);

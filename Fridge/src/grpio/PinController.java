@@ -26,7 +26,7 @@ public class PinController {
 	private static GpioPinDigitalOutput pinOthers;
 	private static GpioPinDigitalOutput pinMilkAndEggs;
 	private static GpioPinDigitalOutput pinFruitAndVegtables;
-	private static GpioPinDigitalOutput pinBarcodeScanner;
+	//private static GpioPinDigitalOutput pinBarcodeScanner;
 	private static final GpioController gpioC = GpioFactory.getInstance();;
 	GpioPinDigitalInput photoSwitch;
 	private DBClass dbC;
@@ -42,8 +42,7 @@ public class PinController {
 		pinOthers = gpioC.provisionDigitalOutputPin(RaspiPin.GPIO_03,"pinOthers",PinState.LOW);
 		
 		//BarcodeScanner Pin
-		pinBarcodeScanner = gpioC.provisionDigitalOutputPin(RaspiPin.GPIO_05,"BarcodeScanner",PinState.LOW);
-		System.out.println("yey");
+		//pinBarcodeScanner = gpioC.provisionDigitalOutputPin(RaspiPin.GPIO_05,"BarcodeScanner",PinState.LOW);
 		//photoswitch
 		photoSwitch = gpioC.provisionDigitalInputPin(RaspiPin.GPIO_07, PinPullResistance.PULL_DOWN);
 		photoSwitch.setShutdownOptions(true);
@@ -119,7 +118,7 @@ public class PinController {
 	
 	//BarcodeScanner
 	private void toggleBarcodeScanner(){
-		pinBarcodeScanner.toggle();
+		//pinBarcodeScanner.toggle();
 	}
 	
 	//TakeAndSavePicture
