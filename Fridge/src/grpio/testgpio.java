@@ -14,11 +14,15 @@ import com.pi4j.io.gpio.RaspiPin;
 import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 
+/**
+ * test purpose
+ */
 public class testgpio {
 	private static GpioPinDigitalOutput tPin;
 	private static GpioPinDigitalInput input;
 	private static GpioController gpioC;
 	
+
 	/**
 	 * @param args
 	 */
@@ -34,6 +38,9 @@ public class testgpio {
 
 
 	}
+	/**
+	 * @throws IOException
+	 */
 	public void test() throws IOException{
 		 
 		gpioC = GpioFactory.getInstance();

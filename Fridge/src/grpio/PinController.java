@@ -21,6 +21,11 @@ import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 
 import database.DBClass;
 
+/**
+ * handles the gpio pin communication
+ * @author poiz
+ *
+ */
 public class PinController {
 	
 	
@@ -33,6 +38,9 @@ public class PinController {
 	GpioPinDigitalInput photoSwitch;
 	private DBClass dbC;
 	
+	/**
+	 * constructor
+	 */
 	public PinController(){
 		
 		dbC = DBClass.getInstance( );
@@ -77,6 +85,10 @@ public class PinController {
 	
 	//Position Indicatior Functions
 	
+	/**
+	 * Sets the GPIO-Pin for the LED of a given Categorie to High 
+	 * @param categorie categorie of a product to light up the right LED
+	 */
 	public void positionIndicatorLed(int categorie){
 		
 		setAllPinsLow();
@@ -102,6 +114,10 @@ public class PinController {
 		}
 	}
 	
+	/**
+	 * calls setAllPinsLow after 5 seconds
+	 * @param pin Gpio pin which hast to be low
+	 */
 	private void setPinStateLowAfterDelay(GpioPinDigitalOutput pin){
 		new java.util.Timer().schedule( 
 		        new java.util.TimerTask() {
@@ -114,6 +130,9 @@ public class PinController {
 		);
 
 	}
+	/**
+	 * Sets all GPIO-Pins for the LED´s to low
+	 */
 	private void setAllPinsLow(){
 		
 		pinMeatAndFish.setState(PinState.LOW);
@@ -123,11 +142,19 @@ public class PinController {
 	}
 	
 	//BarcodeScanner
+	/**
+	 * not in use
+	 */
 	private void toggleBarcodeScanner(){
 		//pinBarcodeScanner.toggle();
 	}
 	
 	//TakeAndSavePicture
+	/**
+	 * takes a picture of the Webcam and saves it as fridge.jpg
+	 * @throws IOException
+	 * @throws SQLException
+	 */
 	private void TakeAndSavePicture() throws IOException, SQLException{
 		
 		String currentDir = System.getProperty("user.dir");

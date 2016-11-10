@@ -10,6 +10,11 @@ import java.net.UnknownHostException;
 public class testClient {
 	
 	static PrintWriter out;
+	/**
+	 * @param args
+	 * @throws UnknownHostException
+	 * @throws IOException
+	 */
 	public static void main(String[] args) throws UnknownHostException, IOException {
 		
 		String name = "jan";
@@ -39,6 +44,9 @@ public class testClient {
 					
 	}
 	
+	/**
+	 * @param msg
+	 */
 	public static void sendMsgToServer(String msg)
 	{
 		out.println(msg);

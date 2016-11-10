@@ -12,7 +12,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
+/**
+ * Class to send a http Getrequest
+ */
 public class HttpUrlCon {
 	
 	private final String APPKEY = "AIzaSyDPtZaudeIDJ0nkWN4jNXgRxmBCBrDLiug";
@@ -23,9 +25,16 @@ public class HttpUrlCon {
 	private static HttpUrlCon instance;
 	
 	
+	/**
+	 * constructor
+	 */
 	public HttpUrlCon() {
 	}
 
+	/**
+	 * singleton pattern, returns a object of the class
+	 * @return object of the class HttpUrlCon
+	 */
 	public static HttpUrlCon getInstance() {
 		if (HttpUrlCon.instance == null) {
 			HttpUrlCon.instance = new HttpUrlCon();
@@ -41,6 +50,12 @@ public class HttpUrlCon {
 	
 	
 	// HTTP GET request
+	/**
+	 * searches google for a productname by a given barcode
+	 * @param barcode
+	 * @return Name of the Product which was found online by the given barcode
+	 * @throws Exception
+	 */
 	public String getProduktName(long barcode) throws Exception {
 		
 		String url = "https://www.googleapis.com/customsearch/v1?key="+APPKEY+"&cx="+ENGINE_ID+"&q="+barcode;
@@ -73,6 +88,11 @@ public class HttpUrlCon {
 	}
 
 	
+	/**
+	 * parses the received json for the produktname 
+	 * @param jSON
+	 * @return Preoductname in JSON
+	 */
 	public String jsonToObject(String jSON)
 	{
 		System.out.println(jSON.toString());

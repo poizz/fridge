@@ -30,14 +30,26 @@ import data.Picture;
 import data.Product;
 import data.ShoppingList;
 
+/**
+ * Class to  access the Database
+ * @author poiz
+ *
+ */
 public class DBClass {
 
 	private static DBClass instance;
 	private static PinController pinC;
 
+	/**
+	 * 
+	 */
 	private DBClass() {
 	}
 
+	/**
+	 * Singleton pattern
+	 * @return an object of the class DBClass
+	 */
 	public static DBClass getInstance() {
 		if (DBClass.instance == null) {
 			DBClass.instance = new DBClass();
@@ -46,6 +58,10 @@ public class DBClass {
 		return DBClass.instance;
 	}
 
+	/**
+	 * returns a Connection to the Mysql Database
+	 * @return Connection  to the Mysql Database
+	 */
 	private Connection getDBConnection() {
 		Connection con = null;
 		String url = "jdbc:mysql://localhost:3306/fridgedb_rpi";
@@ -72,6 +88,12 @@ public class DBClass {
 		}
 		return con;
 	}
+	/**
+	 * Searches in Database for a Product by a given Name. if no Product is found, a Product with the given name will be created
+	 * @param productName name of the product wich want to be searched or created
+	 * @return the product
+	 * @throws SQLException
+	 */
 	public Product searchOrCreateProduct(String productName) throws SQLException
 	{
 		Product prod = null;
@@ -96,6 +118,12 @@ public class DBClass {
 		
 		return prod;
 	}
+	/**
+	 * returns the id of the last product which has been stored 
+	 * @param id  id of a product
+	 * @return storeid of the last product with the given id wich has been stored
+	 * @throws SQLException
+	 */
 	public int getLastSotoreIDByProductID(int id) throws SQLException{
 
 		Connection con = getDBConnection();
@@ -113,6 +141,12 @@ public class DBClass {
 		con.close();
 		return  storeID;
 	}
+	/**
+	 * Searches a Product in the Database by a given name
+	 * @param productName name of a product
+	 * @return object of the product
+	 * @throws SQLException
+	 */
 	public Product searchProductByName(String productName) throws SQLException
 	{
 		productName = removeQuote(productName);
@@ -147,6 +181,12 @@ public class DBClass {
 		return  new Product(barcode,productname,categorie,shelflife,produkt_id);
 	}
 
+	/**
+	 * searches a product in databse by a given id
+	 * @param id id of a product
+	 * @return object of a product
+	 * @throws SQLException
+	 */
 	public Product searchProductByID(int id) throws SQLException {
 
 		Connection con = getDBConnection();
@@ -179,6 +219,12 @@ public class DBClass {
 		return  new Product(barcode,productname,categorie,shelflife,produkt_id);
 	}
 	
+	/**
+	 * inserts a new Product into the database
+	 * @param barcode barcode of the product wich want to be added to database
+	 * @param productname name of the product wich want to be added to database
+	 * @throws SQLException
+	 */
 	public void insertNewProduct(long barcode, String productname) throws SQLException {
 		productname = removeQuote(productname);
 		Connection con = getDBConnection();
@@ -188,6 +234,12 @@ public class DBClass {
 		con.close();
 	}
 	
+	/**
+	 * updates the Categorie of a Product
+	 * @param id id of the product where the categorie want to be changed
+	 * @param categorieID categorieid of the new categorie
+	 * @throws SQLException
+	 */
 	public void updateCategorieOfProductByID(int id, int categorieID) throws SQLException
 	{
 		Connection con = getDBConnection();
@@ -198,6 +250,12 @@ public class DBClass {
 		pinC.positionIndicatorLed(categorieID);
 	}
 	
+	/**
+	 * updates the expiredate of a product by the productid
+	 * @param id of the product where the expiredate want to be changed
+	 * @param expDate new expiredate
+	 * @throws SQLException
+	 */
 	public void updateExpireDateOfdStoredProductByID(int id, Date expDate) throws SQLException
 	{
 		Connection con = getDBConnection();
@@ -208,6 +266,12 @@ public class DBClass {
 		updateShelfLifeByID (id,getDateDiff(getTodaysDate(),expDate));
 		
 	}
+	/**
+	 * updates the expiredate of a product by the storeid
+	 * @param id  storeid of the product where the expiredate want to be changed
+	 * @param expDate new expiredate
+	 * @throws SQLException
+	 */
 	public void updateExpireDateOfdStoredProductByStoreID(int id, Date expDate) throws SQLException
 	{
 		Connection con = getDBConnection();
@@ -217,6 +281,12 @@ public class DBClass {
 		con.close();
 		
 	}
+	/**
+	 * updates the shelflife of a product by the productid
+	 * @param id id of the product where the shelflife want to be changed
+	 * @param days new shelflife
+	 * @throws SQLException
+	 */
 	public void updateShelfLifeByID(int id, int days) throws SQLException{
 		Connection con = getDBConnection();
 		Statement stmt = con.createStatement();
@@ -225,6 +295,12 @@ public class DBClass {
 		con.close();
 	}
 	
+	/**
+	 * stores a product in database
+	 * @param prod object of a product
+	 * @throws SQLException
+	 * @throws ParseException
+	 */
 	public void storeProduct(Product prod) throws SQLException, ParseException{
 		Connection con = getDBConnection();
 		Statement stmt = con.createStatement();
@@ -241,6 +317,10 @@ public class DBClass {
 	}
 	
 	
+	/**
+	 * returns todays date
+	 * @return the date of today
+	 */
 	public Date getTodaysDate(){
 		
 		Calendar today = Calendar.getInstance();
@@ -250,12 +330,25 @@ public class DBClass {
 		return todayDate;
 	}
 	
+	/**
+	 * calculates the amount of days between two dates
+	 * @param date1 first date
+	 * @param date2 second date
+	 * @return days between the two given dates
+	 */
 	public int getDateDiff(Date date1, Date date2) {
 	    long diffInMillies = date2.getTime() - date1.getTime();
 	    return (int)TimeUnit.DAYS.convert(diffInMillies,TimeUnit.MILLISECONDS);
 	}
 	
 	//id: 0 = h�hlschrank, 1= gefrierfach
+	/**
+	 * stores a picture in Database
+	 * @param id
+	 * @param picture
+	 * @throws SQLException
+	 * @throws FileNotFoundException
+	 */
 	public void storePic(int id, File picture ) throws SQLException, FileNotFoundException{
 		
 		FileInputStream fis = new FileInputStream(picture);
@@ -271,6 +364,13 @@ public class DBClass {
 		con.close();
 	}
 		
+	/**
+	 * gets all products from databay by a given categorieid
+	 * @param stored
+	 * @param categorieID
+	 * @return javalist of all Products of the given categorie
+	 * @throws SQLException
+	 */
 	public List<Product> getProductsByCategorie(int stored,int categorieID) throws SQLException{
 		
 		List<Product> prodList = new ArrayList<Product>();
@@ -321,6 +421,12 @@ public class DBClass {
 	}
 	
 	
+	/**
+	 * gets the id of a product by a given barcode
+	 * @param barcode
+	 * @return id of the broduct with the given barcode
+	 * @throws SQLException
+	 */
 	public int getIDByBarcode(long barcode) throws SQLException
 	{
 		
@@ -347,6 +453,11 @@ public class DBClass {
 	}
 	
 	
+	/**
+	 * gets all categories from database
+	 * @return JavaList of all categories
+	 * @throws SQLException
+	 */
 	public List<Categorie> getallCategories() throws SQLException{
 
 		List<Categorie> catList = new ArrayList<Categorie>();
@@ -370,6 +481,11 @@ public class DBClass {
 	}
 	
 	//delete by productID
+	/**
+	 * deletes a product from database by a given id
+	 * @param id id of the product wich want to be deleted
+	 * @throws SQLException
+	 */
 	public void deleteStoredProductByID(int id) throws SQLException
 	{
 		Connection con = getDBConnection();
@@ -379,6 +495,10 @@ public class DBClass {
 		con.close();
 	}
 	//delete by storeID
+	/**
+	 * unstore a product by a given product id
+	 * @param id storeid of the product wich want to be deleted
+	 */
 	public void deleteStoredProductByStoreID(int id)
 	{
 		
@@ -405,6 +525,11 @@ public class DBClass {
 
 		
 	}
+	/**
+	 * get all products wich has been deletet an not stored again
+	 * @return JavaList of all deleted Products
+	 * @throws SQLException
+	 */
 	public List<Product>getDeletedProducts() throws SQLException{
 		List<Product> prodList = new ArrayList<Product>();
 		String strSelect;
@@ -425,6 +550,10 @@ public class DBClass {
 		con.close();
 		return prodList;
 	}
+	/**
+	 * limits the items in the table deletedproducts to the newest 20
+	 * @throws SQLException
+	 */
 	public void limitDeletedItemsTo20() throws SQLException{
 		Connection con = getDBConnection();
 		Statement stmt = con.createStatement();
@@ -433,6 +562,11 @@ public class DBClass {
 		con.close();
 		
 	}
+	/**
+	 * adds a item to the table of deleted items
+	 * @param id id of the item which want to be added to deleted items
+	 * @throws SQLException
+	 */
 	public void addDeletedItem(int id) throws SQLException{ //product has been deleted, is suggested for shoppinglist now
 		//limitDeletedItemsTo20();
 		Connection con = getDBConnection();
@@ -442,6 +576,11 @@ public class DBClass {
 		con.close();
 		
 	}	
+	/**
+	 * deletes a item from the table of deletet items if it has been stored
+	 * @param id 
+	 * @throws SQLException
+	 */
 	public void deleteDeletedItem(int id) throws SQLException{ // product hast been stored, not suggested for shoppinglist anymore
 		//limitDeletedItemsTo20();
 		Connection con = getDBConnection();
@@ -451,6 +590,12 @@ public class DBClass {
 		con.close();
 		
 	}
+	/**
+	 * gets the id of a stored item by the storeid
+	 * @param storeid storeid of a product
+	 * @return the productid of the product
+	 * @throws SQLException
+	 */
 	public int getProductIdOfStoredItem(int storeid) throws SQLException{
 		int productid = 0;
 		String strSelect;
@@ -468,6 +613,11 @@ public class DBClass {
 		return productid;
 	
 	}
+	/**
+	 * inserts the photos wich have been taken by the webcam into the database
+	 * @throws SQLException
+	 * @throws IOException
+	 */
 	public void inserPic() throws SQLException, IOException{
 		Connection con = getDBConnection();
 		 String INSERT_PICTURE = "Update prictures set photo=? where id = 1";
@@ -484,6 +634,12 @@ public class DBClass {
 		      fis.close();
 	
 	}
+	/**
+	 * returns a stored Product by Name
+	 * @param name name of a product which has bee stored
+	 * @return JavaList of all Product where the name contains the given Productname
+	 * @throws SQLException
+	 */
 	public List<Product> getStoredProductsByName(String name) throws SQLException{
 		
 		List<Product> prodList = new ArrayList<Product>();
@@ -508,6 +664,11 @@ public class DBClass {
 		return prodList;
 	}
 	
+	/**
+	 * gets the stored pictures from the databse
+	 * @return JavaList of all Pictures
+	 * @throws SQLException
+	 */
 	public List<Picture> getPircturesFromDB() throws SQLException{
 		List<Picture> picList = new ArrayList<Picture>();
 		String strSelect;
@@ -535,6 +696,11 @@ public class DBClass {
 		return picList;
 		
 	}
+	/**
+	 * gets the shoppinglists from the database
+	 * @return JavaList of all Shoppinglists
+	 * @throws SQLException
+	 */
 	public List<ShoppingList> getAllShoppingLists() throws SQLException{
 		List<ShoppingList> sLists = new ArrayList<ShoppingList>();
 		String strSelect;
@@ -560,6 +726,12 @@ public class DBClass {
 		return sLists;
 		
 	}
+	/**
+	 * returns all Products of a shoppinglist by a given shoppinglist id
+	 * @param shoppingListID id of a shoppinglist
+	 * @return JavaList of all Products of a Shoppinglist
+	 * @throws SQLException
+	 */
 	public List<Product> getAllProductsOfShoppingList(int shoppingListID) throws SQLException{
 		
 
@@ -583,6 +755,12 @@ public class DBClass {
 		return pList;
 		
 	}
+	/**
+	 * delets a product from a shoppinglist
+	 * @param productId
+	 * @param shoppingListID
+	 * @throws SQLException
+	 */
 	public void deleteProductFromShoppingList(int productId, int shoppingListID) throws SQLException
 	{
 		Connection con = getDBConnection();
@@ -591,6 +769,12 @@ public class DBClass {
 		stmt.close();
 		con.close();
 	}
+	/**
+	 * adds a product top a shoppinglist
+	 * @param productId
+	 * @param shoppingListID
+	 * @throws SQLException
+	 */
 	public void addProducttoShoppingList(int productId, int shoppingListID) throws SQLException
 	{
 		Connection con = getDBConnection();
@@ -599,6 +783,11 @@ public class DBClass {
 		stmt.close();
 		con.close();
 	}
+	/**
+	 * delets a shoppinglist by a given shoppinglistid
+	 * @param shoppingListID
+	 * @throws SQLException
+	 */
 	public void deleteShoppingListById( int shoppingListID) throws SQLException
 	{
 		Connection con = getDBConnection();
@@ -607,6 +796,12 @@ public class DBClass {
 		stmt.close();
 		con.close();
 	}
+	/**
+	 * updates the name of a shoppinglist by a given shoppinglistid
+	 * @param id
+	 * @param name
+	 * @throws SQLException
+	 */
 	public void updateShoppingListNameById (int id, String name) throws SQLException{
 		name = removeQuote(name);
 		Connection con = getDBConnection();
@@ -616,6 +811,11 @@ public class DBClass {
 		con.close();
 	}
 
+	/**
+	 * creates a new Shoppinglist
+	 * @return
+	 * @throws SQLException
+	 */
 	public ShoppingList createNewShoppingList() throws SQLException{
 		Connection con = getDBConnection();
 		Statement stmt = con.createStatement();
@@ -653,6 +853,11 @@ public class DBClass {
 
 
 	
+	/**
+	 * removes all " from a string
+	 * @param str
+	 * @return String without "
+	 */
 	private String removeQuote(String str){
 		str = str.replaceAll("\"", "");
 		return str;

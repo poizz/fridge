@@ -59,7 +59,14 @@ public class communicationProtocol {
 	
 	
 	
-	 public String processInput(String theInput) throws NumberFormatException, Exception {
+	 /**
+	  * the  processInput method knows which ProcessCode stands for which Task eg "000" -> all Products in database
+	 * @param theInput from client received message
+	 * @return 
+	 * @throws NumberFormatException
+	 * @throws Exception
+	 */
+	public String processInput(String theInput) throws NumberFormatException, Exception {
 		System.out.println("income: "+theInput);
 		 String taskCode = "";
 		 if(theInput.length()>=3){

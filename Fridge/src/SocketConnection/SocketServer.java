@@ -15,11 +15,18 @@ import RPIgetItem.JsonAPI;
 	    protected boolean      isStopped    = false;
 	    protected Thread       runningThread= null;
 
+	    /**
+	     * Constuctor wich sets the port and starts the BarcodescannerListener
+	     * @param port
+	     */
 	    public SocketServer(int port){
 	        this.serverPort = port;
 	        BarcodeScannerListener.getInstance().startListener();
 	    }
 
+	    /* (non-Javadoc)
+	     * @see java.lang.Runnable#run()
+	     */
 	    public void run(){
 	        synchronized(this){
 	            this.runningThread = Thread.currentThread();
@@ -51,10 +58,17 @@ import RPIgetItem.JsonAPI;
 	    }
 
 
+	    /**
+	     * returns the status of the SocketConnectionServer
+	     * @return object of the class SocketServer
+	     */
 	    private synchronized boolean isStopped() {
 	        return this.isStopped;
 	    }
 
+	    /**
+	     *Stops the SocketConnectionServer
+	     */
 	    public synchronized void stop(){
 	        this.isStopped = true;
 	        try {
@@ -64,6 +78,9 @@ import RPIgetItem.JsonAPI;
 	        }
 	    }
 
+	    /**
+	     * Opens Socket of the SocketConnection 
+	     */
 	    private void openServerSocket() {
 	        try {
 	            this.serverSocket = new ServerSocket(this.serverPort);

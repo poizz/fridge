@@ -24,10 +24,18 @@ public class BarcodeScannerListener implements NativeKeyListener {
 	private String registerToken;
 	
 	
+	/**
+	 * returns the registertoken from the client
+	 * @return the registertoken of the client
+	 */
 	public String getRegisterToken() {
 		return registerToken;
 	}
 
+	/**
+	 * sets the registertoken
+	 * @param registerToken the registertoken of the client
+	 */
 	public void setRegisterToken(String registerToken) {
 		this.registerToken = registerToken;
 		System.out.println("Register token is set: "+registerToken);
@@ -37,10 +45,18 @@ public class BarcodeScannerListener implements NativeKeyListener {
 
 	
 	
+	/**
+	 * returns the scanstatus (1 = delete item, 0 = add item)
+	 * @return the status of the scanner (1 = delete item, 0 = add item)
+	 */
 	public int getScanStatus() {
 		return scanStatus;
 	}
 
+	/**
+	 * sets the scanstatus (1 = delete item, 0 = add item)
+	 * @param scanStatus
+	 */
 	public void setScanStatus(int scanStatus) {
 		this.scanStatus = scanStatus;
 	}
@@ -48,6 +64,10 @@ public class BarcodeScannerListener implements NativeKeyListener {
 	private static BarcodeScannerListener instance;
 
 
+	/**
+	 * singleton pattern
+	 * @return an object of the class BarcodeScannerListener
+	 */
 	public static BarcodeScannerListener getInstance() {
 		if (BarcodeScannerListener.instance == null) {
 			BarcodeScannerListener.instance = new BarcodeScannerListener();
@@ -55,6 +75,9 @@ public class BarcodeScannerListener implements NativeKeyListener {
 		return BarcodeScannerListener.instance;
 	}
 
+	/**
+	 * starts the keyboardlistener which listens to the barcodescanner (Barcodes are deliverd as Keyboardsignal)
+	 */
 	public void startListener()
 	{
 		LogManager.getLogManager().reset();  	
@@ -70,6 +93,9 @@ public class BarcodeScannerListener implements NativeKeyListener {
         GlobalScreen.addNativeKeyListener(BarcodeScannerListener.getInstance());    
 	}
 	
+    /* (non-Javadoc)
+     * @see org.jnativehook.keyboard.NativeKeyListener#nativeKeyPressed(org.jnativehook.keyboard.NativeKeyEvent)
+     */
     public void nativeKeyPressed(NativeKeyEvent e) {
          	 	
         if(barcode.length()==13){
@@ -102,13 +128,26 @@ public class BarcodeScannerListener implements NativeKeyListener {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.jnativehook.keyboard.NativeKeyListener#nativeKeyReleased(org.jnativehook.keyboard.NativeKeyEvent)
+     */
     public void nativeKeyReleased(NativeKeyEvent e) {
 
     }
+    /* (non-Javadoc)
+     * @see org.jnativehook.keyboard.NativeKeyListener#nativeKeyTyped(org.jnativehook.keyboard.NativeKeyEvent)
+     */
     public void nativeKeyTyped(NativeKeyEvent e) {
 
     }
-	 public Product scannedProduct(long barcode) throws Exception
+	 /**
+	  * looks in the database the product of the given barcode. If the product is not in the databse, httpCon will be asked to look online for the prodcuct.
+	  * 
+	 * @param barcode
+	 * @return the product which has been scannd
+	 * @throws Exception
+	 */
+	public Product scannedProduct(long barcode) throws Exception
 		{
 			Product prod = null;
 			String itemName = "";
@@ -138,6 +177,13 @@ public class BarcodeScannerListener implements NativeKeyListener {
 			
 			return prod;
 		}
+	    /**
+	     * Stores or delets a given product depending on the scanstatus
+	     * @param p Product which want to be stored or deleted
+	     * @throws SQLException
+	     * @throws ParseException
+	     * @throws IOException
+	     */
 	    public void storeOrDelete(Product p) throws SQLException, ParseException, IOException
 	    {
 	    	System.out.println("Der Status ist: "+scanStatus);;
@@ -158,6 +204,7 @@ public class BarcodeScannerListener implements NativeKeyListener {
 			}
 	    }
    
+
     public void sendCloudMassege(String msg){
     	
     }
