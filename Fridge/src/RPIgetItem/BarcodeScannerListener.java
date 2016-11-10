@@ -75,7 +75,7 @@ public class BarcodeScannerListener implements NativeKeyListener {
         if(barcode.length()==13){
         	try {
         		
-        		//überprüft ob produkt im system, falls nein speichere produkt
+        		//ï¿½berprï¿½ft ob produkt im system, falls nein speichere produkt
         		jAPI.objectToJson(scannedProduct(Long.parseLong(barcode)));
 			} catch (NumberFormatException e1) {
 				// TODO Auto-generated catch block
@@ -148,11 +148,12 @@ public class BarcodeScannerListener implements NativeKeyListener {
 				
 				
 			}else{
+				sendgcm.sendGCMMsg(jAPI.objectToJson(p), "011", registerToken);
 				System.out.println(p.getProductname()+" has been deletet");
 				dbC.deleteStoredProductByID(p.getProductID());
 				dbC.addDeletedItem(p.getProductID());
 				System.out.println("das json: "+jAPI.objectToJson(p));
-				sendgcm.sendGCMMsg(jAPI.objectToJson(p), "011", registerToken);
+
 
 			}
 	    }

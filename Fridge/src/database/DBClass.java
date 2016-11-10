@@ -236,6 +236,7 @@ public class DBClass {
 		stmt.executeUpdate("INSERT INTO storedproducts (product_id,storedate,expiredate) VALUES ("+prod.getProductID()+", '"+stored+"', '"+exp+"')");
 		stmt.close();
 		con.close();
+		System.out.println("store");
 		pinC.positionIndicatorLed(Integer.parseInt(prod.getCategorie()));
 	}
 	
@@ -378,14 +379,30 @@ public class DBClass {
 		con.close();
 	}
 	//delete by storeID
-	public void deleteStoredProductByStoreID(int id) throws SQLException
+	public void deleteStoredProductByStoreID(int id)
 	{
-		addDeletedItem(getProductIdOfStoredItem(id));
-		Connection con = getDBConnection();
-		Statement stmt = con.createStatement();
-		stmt.executeUpdate("Delete FROM storedproducts where storeid = "+id);
-		stmt.close();
-		con.close();
+		
+		try{
+			Connection con = getDBConnection();
+			Statement stmt = con.createStatement();
+			stmt.executeUpdate("Delete FROM storedproducts where storeid = "+id);
+			stmt.close();
+			con.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	
+		try {
+			addDeletedItem(getProductIdOfStoredItem(id));
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+
+
 		
 	}
 	public List<Product>getDeletedProducts() throws SQLException{

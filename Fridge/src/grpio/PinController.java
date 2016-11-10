@@ -1,11 +1,13 @@
 package grpio;
 
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
+
+import javax.imageio.ImageIO;
 
 import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;
@@ -35,6 +37,8 @@ public class PinController {
 		
 		dbC = DBClass.getInstance( );
 		
+		System.out.println("initiiert");
+		
 		//Position Indicatior Pins
 		pinMeatAndFish = gpioC.provisionDigitalOutputPin(RaspiPin.GPIO_00,"MeatAndFish",PinState.LOW);
 		pinMilkAndEggs = gpioC.provisionDigitalOutputPin(RaspiPin.GPIO_01,"pinMilkAndEggs",PinState.LOW);
@@ -50,7 +54,8 @@ public class PinController {
             @Override
             public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
                 // display pin state on console
-               // System.out.println(" --> GPIO PIN STATE CHANGE: " + event.getPin() + " = " + event.getState());
+            	
+                System.out.println(" --> GPIO PIN STATE CHANGE: " + event.getPin() + " = " + event.getState());
                 if(event.getState()==PinState.HIGH){
                 	System.out.println("yey");
                 	try {
@@ -75,6 +80,7 @@ public class PinController {
 	public void positionIndicatorLed(int categorie){
 		
 		setAllPinsLow();
+		System.out.println("storeInPinC "+ categorie);
 		
 		switch(categorie){
 			case 1:
@@ -125,9 +131,12 @@ public class PinController {
 	private void TakeAndSavePicture() throws IOException, SQLException{
 		
 		String currentDir = System.getProperty("user.dir");
-        Runtime.getRuntime().exec("sudo fswebcam -r 640x480 -d /dev/video0 "+currentDir+"/fridge.jpg");      
+        Runtime.getRuntime().exec("sudo fswebcam -r 1280x7 -d /dev/video0 "+currentDir+"/fridge.jpg");    
 	    File file = new File("fridge.jpg");
+	    System.out.println("ok2");
         dbC.storePic(0, file);
         
 	}
+	
+
 }
